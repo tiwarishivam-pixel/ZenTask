@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const router = useRouter(); // for navigation
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess("");
 
     try {
       const res = await fetch("http://localhost:5000/api/auth/signup", {
@@ -28,27 +29,25 @@ export default function SignupPage() {
         return;
       }
 
-      setSuccess("Signup successful! You can now log in.");
-      setName("");
-      setEmail("");
-      setPassword("");
+      // Redirect to dashboard after successful signup
+      router.push("/dashboard");
     } catch (err) {
       setError("Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Create an Account
+    <div className="flex items-center justify-center min-h-screen bg-white">
+      <div className="w-full max-w-md border border-black rounded-xl p-8">
+        <h2 className="text-2xl font-bold text-center text-black mb-6">
+          Start Organizing Your Work with Zentask
         </h2>
 
         <form onSubmit={handleSignup} className="space-y-4">
           <input
             type="text"
             placeholder="Name"
-            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black text-black"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
@@ -57,7 +56,7 @@ export default function SignupPage() {
           <input
             type="email"
             placeholder="Email"
-            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black text-black"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -66,7 +65,7 @@ export default function SignupPage() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300"
+            className="w-full px-4 py-2 border border-black rounded-lg focus:outline-none focus:ring-1 focus:ring-black text-black"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -74,20 +73,19 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-black text-white py-2 rounded-lg hover:bg-white hover:text-black border border-black transition"
           >
             Sign Up
           </button>
         </form>
 
-        {error && <p className="mt-4 text-red-500 text-sm">{error}</p>}
-        {success && <p className="mt-4 text-green-600 text-sm">{success}</p>}
+        {error && <p className="mt-4 text-red-600 text-sm">{error}</p>}
 
-        <p className="mt-6 text-center text-gray-600 text-sm">
+        <p className="mt-6 text-center text-black text-sm">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 font-semibold hover:underline">
+          <Link href="./login" className="text-black font-semibold hover:underline">
             Login
-          </a>
+          </Link>
         </p>
       </div>
     </div>
