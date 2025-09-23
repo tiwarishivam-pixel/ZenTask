@@ -1,29 +1,22 @@
-import * as projectRepo from '../repositories/project.repository';
+import ProjectRepository from '../repositories/project.repository';
 import { IProject } from '../models/project.model';
 
-/**
- * Create a new project
- * @param data - Object containing project name and optional description
- * @returns The created project
- */
-export const createProjectService = async (data: { name: string; description?: string }): Promise<IProject> => {
-  // Validation or business logic can go here if needed
-  return projectRepo.createProject(data);
-};
+class ProjectService {
+  async createProject(data: Partial<IProject>) {
+    return await ProjectRepository.create(data);
+  }
 
-/**
- * List all projects
- * @returns Array of projects, sorted by createdAt descending
- */
-export const listProjectsService = async (): Promise<IProject[]> => {
-  return projectRepo.getProjects();
-};
+  async listProjects() {
+    return await ProjectRepository.list();
+  }
 
-/**
- * Delete a project by ID
- * @param id - Project ID to delete
- * @returns The deleted project
- */
-export const deleteProjectService = async (id: string): Promise<IProject | null> => {
-  return projectRepo.deleteProject(id);
-};
+  async deleteProject(id: string) {
+    return await ProjectRepository.delete(id);
+  }
+
+  async getProjectById(id: string) {
+    return await ProjectRepository.getById(id);
+  }
+}
+
+export default new ProjectService();

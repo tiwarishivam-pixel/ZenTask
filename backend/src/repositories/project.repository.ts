@@ -1,28 +1,22 @@
-import { Project, IProject } from '../models/project.model';
+import { ProjectModel, IProject } from '../models/project.model';
 
-/**
- * Create a new project
- * @param data - Project data
- * @returns Created project document
- */
-export const createProject = async (data: Partial<IProject>): Promise<IProject> => {
-  const project = new Project(data);
-  return project.save();
-};
+class ProjectRepository {
+  async create(data: Partial<IProject>): Promise<IProject> {
+    const project = new ProjectModel(data);
+    return await project.save();
+  }
 
-/**
- * Get all projects
- * @returns Array of project documents sorted by createdAt descending
- */
-export const getProjects = async (): Promise<IProject[]> => {
-  return Project.find().sort({ createdAt: -1 });
-};
+  async list(): Promise<IProject[]> {
+    return await ProjectModel.find().sort({ createdAt: -1 });
+  }
 
-/**
- * Delete project by ID
- * @param id - Project ID
- * @returns Deleted project document or null
- */
-export const deleteProject = async (id: string): Promise<IProject | null> => {
-  return Project.findByIdAndDelete(id);
-};
+  async delete(id: string): Promise<IProject | null> {
+    return await ProjectModel.findByIdAndDelete(id);
+  }
+
+  async getById(id: string): Promise<IProject | null> {
+    return await ProjectModel.findById(id);
+  }
+}
+
+export default new ProjectRepository();

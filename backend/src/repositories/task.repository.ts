@@ -1,50 +1,35 @@
-import { Task, ITask } from '../models/task.model';
-import mongoose from 'mongoose';
+import { Task, ITask } from "../models/task.model";
+import mongoose from "mongoose";
 
 /**
  * Create a new task
- * @param data - Task data
- * @returns Created task document
  */
 export const createTask = async (data: Partial<ITask>): Promise<ITask> => {
+  if (data.projectId && typeof data.projectId === "string") {
+    data.projectId = new mongoose.Types.ObjectId(data.projectId);
+  }
   const task = new Task(data);
   return task.save();
 };
 
 /**
- * Get tasks by project with optional filters
- * @param projectId - Project ID to fetch tasks for
- * @param filters - Optional filters (status, priority, deadline)
- * @returns Array of task documents
+ * Get tasks by project ID
  */
-export const getTasksByProject = async (
-  projectId: string,
-  filters: any = {},
-  page = 1,
-  limit = 10
-): Promise<ITask[]> => {
-  const skip = (page - 1) * limit;
-  return Task.find({ projectId: new mongoose.Types.ObjectId(projectId), ...filters })
-             .sort({ createdAt: -1 })
-             .skip(skip)
-             .limit(limit);
+export const getTasksByProject = async (projectId: string): Promise<ITask[]> => {
+  const projectObjectId = new mongoose.Types.ObjectId(projectId);
+  return Task.find({ projectId: projectObjectId }).sort({ createdAt: -1 });
 };
 
 /**
- * Update task by ID
- * @param id - Task ID
- * @param data - Updated task data
- * @returns Updated task document
+ * Update a task by ID
  */
 export const updateTask = async (id: string, data: Partial<ITask>): Promise<ITask | null> => {
   return Task.findByIdAndUpdate(id, data, { new: true });
 };
 
 /**
- * Delete task by ID
- * @param id - Task ID
- * @returns Deleted task document or null
+ * Delete a task by ID
  */
-export const deleteTask = async (id: string): Promise<ITask | null> => {
-  return Task.findByIdAndDelete(id);
+export const deleteTask = async (id: string): Promise<{ deletedCount?: number }> => {
+  return Task.deleteOne({ _id: id });
 };

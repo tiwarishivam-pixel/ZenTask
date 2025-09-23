@@ -1,16 +1,20 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IProject extends Document {
-  _id: mongoose.Types.ObjectId;
   name: string;
-  description?: string;
+  description: string;
+  owner?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const projectSchema = new Schema<IProject>({
-  name: { type: String, required: true },
-  description: { type: String },
-}, { timestamps: true });
+const ProjectSchema = new Schema<IProject>(
+  {
+    name: { type: String, required: true },
+    description: { type: String },
+    owner: { type: String },
+  },
+  { timestamps: true }
+);
 
-export const Project = mongoose.model<IProject>('Project', projectSchema);
+export const ProjectModel = mongoose.model<IProject>('Project', ProjectSchema);

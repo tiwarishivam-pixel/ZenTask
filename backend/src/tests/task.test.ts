@@ -1,9 +1,12 @@
 import request from "supertest";
-import app from "../app";
 import mongoose from "mongoose";
-import {Task} from "../models/task.model";
-import {User} from "../models/user.model"; // Assuming you have a User model
-import {Project} from "../models/project.model"; // Assuming you have a Project model
+import app from "../app";
+import { Task } from "../models/task.model";
+import { User } from "../models/user.model";
+import { ProjectModel } from "../models/project.model";
+import dotenv from "dotenv";
+
+dotenv.config({ path: ".env.test" });
 
 describe("Tasks API", () => {
   let token: string;
@@ -14,8 +17,12 @@ describe("Tasks API", () => {
     // Connect to test DB
     await mongoose.connect(process.env.MONGO_URI_TEST!);
 
-    // Create a test user
-    const user = await User.create({ name: "Test User", email: "test@example.com", password: "password123" });
+    // Create test user
+    const user = await User.create({
+      name: "Test User",
+      email: "test@example.com",
+      password: "password123",
+    });
 
     // Login to get JWT
     const res = await request(app)
@@ -25,14 +32,18 @@ describe("Tasks API", () => {
     token = res.body.token;
 
     // Create a test project
-    const project = await Project.create({ name: "Test Project", description: "Test description" });
-    projectId = project._id.toString();
-  });
+    const project = await ProjectModel.create({
+      name: "Test Project",
+      description: "Project for testing",
+    });
+
+    projectId = (project._id as mongoose.Types.ObjectId).toString();
+  }); // ✅ properly close beforeAll
 
   afterAll(async () => {
-    // Clean up DB
+    // Clean up database
     await Task.deleteMany({});
-    await Project.deleteMany({});
+    await ProjectModel.deleteMany({});
     await User.deleteMany({});
     await mongoose.connection.close();
   });

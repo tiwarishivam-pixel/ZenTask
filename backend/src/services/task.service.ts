@@ -1,43 +1,35 @@
-import * as taskRepo from '../repositories/task.repository';
+import * as taskRepo from "../repositories/task.repository";
+import { ITask } from "../models/task.model";
 
 /**
- * Create a new task
- * @param data - Task data
+ * Create task
  */
-export const createTaskService = async (data: any) => {
+export const createTaskService = async (data: Partial<ITask>): Promise<ITask> => {
+  if (!data.title) throw new Error("Task title is required");
+  if (!data.projectId) throw new Error("Project ID is required");
   return taskRepo.createTask(data);
 };
 
 /**
- * Get tasks by project with filters and pagination
- * @param projectId - Project ID
- * @param filters - Optional filters: status, priority, deadline
- * @param page - Page number for pagination
- * @param limit - Number of tasks per page
+ * Get tasks by project
  */
-export const getTasksService = async (
-  projectId: string,
-  filters: any = {},
-  page = 1,
-  limit = 10
-) => {
-  // Pagination handled in repository
-  return taskRepo.getTasksByProject(projectId, filters, page, limit);
+export const getTasksByProjectService = async (projectId: string): Promise<ITask[]> => {
+  if (!projectId) throw new Error("Project ID is required");
+  return taskRepo.getTasksByProject(projectId);
 };
 
 /**
- * Update task by ID
- * @param id - Task ID
- * @param data - Updated fields
+ * Update task
  */
-export const updateTaskService = async (id: string, data: any) => {
+export const updateTaskService = async (id: string, data: Partial<ITask>): Promise<ITask | null> => {
+  if (!id) throw new Error("Task ID is required");
   return taskRepo.updateTask(id, data);
 };
 
 /**
- * Delete task by ID
- * @param id - Task ID
+ * Delete task
  */
-export const deleteTaskService = async (id: string) => {
+export const deleteTaskService = async (id: string): Promise<{ deletedCount?: number }> => {
+  if (!id) throw new Error("Task ID is required");
   return taskRepo.deleteTask(id);
 };
